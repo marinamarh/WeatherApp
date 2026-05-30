@@ -15,3 +15,19 @@ struct CurrentWeatherDTO: Codable {
     let wind: WindDTO
     let sys: SysDTO
 }
+
+extension CurrentWeatherDTO {
+    func toDomain() -> CityWeather {
+        CityWeather(
+            id: id,
+            cityName: name,
+            country: sys.country ?? "",
+            temperature: main.temp,
+            feelsLike: main.feelsLike,
+            humidity: main.humidity,
+            windSpeed: wind.speed,
+            description: weather.first?.description.capitalized ?? "Unknown",
+            icon: weather.first?.icon ?? "01d"
+        )
+    }
+}
