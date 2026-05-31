@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ForecastResponseDTO: Codable {
+struct ForecastResponseDTO: Decodable, Sendable {
     let list: [ForecastItemDTO]
     let city: ForecastCityDTO
 }

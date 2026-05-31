@@ -7,8 +7,7 @@
 
 import Foundation
 
-protocol WeatherServiceProtocol {
-    func fetchCurrentWeather(lat: Double, lon: Double) async throws -> CityWeather
-    func searchCity(query: String) async throws -> [GeocodingDTO]
-    func fetchForecast(lat: Double, lon: Double) async throws -> [Forecast]
+protocol WeatherServiceProtocol: Sendable {
+    func fetchForecast(lat: Double, lon: Double) async throws -> ForecastResult
+    func searchCity(query: String) async throws -> [CityLocation]
 }

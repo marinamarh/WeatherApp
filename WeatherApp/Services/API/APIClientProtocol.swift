@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol APIClientProtocol {
+protocol APIClientProtocol: Sendable {
     func fetch<T: Decodable & Sendable>(url: URL) async throws -> T
 }

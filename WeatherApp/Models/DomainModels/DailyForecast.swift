@@ -1,27 +1,22 @@
 //
-//  Forecast.swift
+//  DailyForecast.swift
 //  WeatherApp
 //
-//  Created by Marina Marhitych on 30.05.2026.
+//  Created by Marina Marhitych on 31.05.2026.
 //
 
 import Foundation
 
-struct Forecast: Identifiable, Hashable, Sendable {
-    let id: Int
+struct DailyForecast: Identifiable, Sendable {
+    let id: String         
     let date: Date
-    let temperature: Double
-    let feelsLike: Double
     let tempMin: Double
     let tempMax: Double
     let description: String
     let iconCode: String
     let pop: Double
-    let windSpeed: Double
-    let humidity: Int
 
     var iconURL: URL? {
         URL(string: "https://openweathermap.org/img/wn/\(iconCode)@2x.png")
     }
 }
-

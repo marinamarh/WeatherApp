@@ -7,6 +7,8 @@
 
 import Foundation
 
-struct WindDTO: Codable {
+struct WindDTO: Decodable, Sendable {
     let speed: Double
+    let deg: Int
+    let gust: Double?
 }

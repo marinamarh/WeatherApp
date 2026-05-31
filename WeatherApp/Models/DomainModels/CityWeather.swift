@@ -7,34 +7,26 @@
 
 import Foundation
 
-struct CityWeather: Identifiable, Hashable  {
-    let id: Int
+struct CityWeather: Identifiable, Hashable, Sendable {
+    let id: String
     let cityName: String
     let country: String
     let temperature: Double
     let feelsLike: Double
+    let tempMin: Double
+    let tempMax: Double
     let humidity: Int
+    let pressure: Int
     let windSpeed: Double
+    let windDeg: Int
     let description: String
-    let icon: String
-    
-    var temperatureString: String {
-        "\(Int(temperature.rounded()))°C"
-    }
-    
-    var feelsLikeString: String {
-        "Feels like \(Int(feelsLike.rounded()))°C"
-    }
-    
-    var humidityString: String {
-        "Humidity: \(humidity)%"
-    }
-    
-    var windString: String {
-        "Wind: \(String(format: "%.1f", windSpeed)) м/с"
-    }
-    
+    let iconCode: String
+    let date: Date
+    let sunrise: Date
+    let sunset: Date
+    let timezone: Int      
+
     var iconURL: URL? {
-        URL(string: "https://openweathermap.org/img/wn/\(icon)@2x.png")
+        URL(string: "https://openweathermap.org/img/wn/\(iconCode)@2x.png")
     }
 }

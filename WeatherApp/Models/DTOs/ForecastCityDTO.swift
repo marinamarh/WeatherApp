@@ -7,8 +7,10 @@
 
 import Foundation
 
-struct ForecastCityDTO: Codable {
-    let id: Int
+struct ForecastCityDTO: Decodable, Sendable {
     let name: String
     let country: String
+    let timezone: Int
+    let sunrise: Int
+    let sunset: Int
 }
