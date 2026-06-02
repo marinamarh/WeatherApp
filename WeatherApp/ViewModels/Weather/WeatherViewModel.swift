@@ -2,77 +2,69 @@
 //  WeatherViewModel.swift
 //  WeatherApp
 //
-//  Created by Marina Marhitych on 31.05.2026.
+//  Created by Marina Marhitych on 02.06.2026.
 //
 
-// WeatherViewModel.swift
 import Foundation
-import SwiftUI
+import CoreLocation
 
 @Observable
+@MainActor
 final class WeatherViewModel {
-
-    private(set) var viewState: WeatherViewState = .idle
-    private(set) var forecastResult: ForecastResult?
-    private(set) var searchResults: [CityLocation] = []
-    private(set) var searchState: SearchState = .idle
-
-    var searchQuery: String = ""
-
-    var isSearching: Bool {
-        !searchQuery.isEmpty
-    }
-
-    var current: CityWeather? {
-        forecastResult?.current
-    }
-
-    var hourly: [Forecast] {
-        forecastResult?.hourly ?? []
-    }
-
-    var daily: [DailyForecast] {
-        forecastResult?.daily ?? []
-    }
-
     private let weatherService: WeatherServiceProtocol
-
-    init(weatherService: WeatherServiceProtocol = WeatherService()) {
+    let locationManager: LocationManager
+    
+    var currentForecast: ForecastResult?
+    var searchResults: [CityLocation] = []
+    var errorMessage: String?
+    var isLoading = false
+    
+    init(
+        weatherService: WeatherServiceProtocol = WeatherService(),
+        locationManager: LocationManager = LocationManager()
+    ) {
         self.weatherService = weatherService
+        self.locationManager = locationManager
     }
-
-    func loadWeather(lat: Double, lon: Double) async {
-        viewState = .loading
-
-        do {
-            forecastResult = try await weatherService.fetchForecast(lat: lat, lon: lon)
-            viewState = .loaded
-        } catch {
-            viewState = .error(error.localizedDescription)
-        }
-    }
-
-    func search() async {
-        let query = searchQuery.trimmingCharacters(in: .whitespaces)
-        guard !query.isEmpty else {
-            clearSearch()
+    
+    func loadWeatherForCurrentLocation() async {
+        guard let location = locationManager.currentLocation else {
+            errorMessage = "Can not get location"
             return
         }
-
-        searchState = .loading
-
+        
+        await fetchForecast(lat: location.lat, lon: location.lon)
+    }
+    
+    func search(query: String) async {
+        guard !query.isEmpty else {
+            searchResults = []
+            return
+        }
+        
         do {
-            let results = try await weatherService.searchCity(query: query)
-            searchResults = results
-            searchState = results.isEmpty ? .empty : .loaded
+            searchResults = try await weatherService.searchCity(query: query)
         } catch {
-            searchState = .error(error.localizedDescription)
+            errorMessage = "Search error: \(error.localizedDescription)"
+            print(error)
         }
     }
-
-    func clearSearch() {
-        searchQuery = ""
-        searchResults = []
-        searchState = .idle
+    
+    func selectCityAndLoadWeather(_ city: CityLocation) async {
+        await fetchForecast(lat: city.lat, lon: city.lon)
+        searchResults = [] // Очищаємо результати пошуку після вибору
+    }
+    
+    private func fetchForecast(lat: Double, lon: Double) async {
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            currentForecast = try await weatherService.fetchForecast(lat: lat, lon: lon)
+        } catch {
+            errorMessage = "Can not fetch weather: \(error.localizedDescription)"
+        }
+        
+        isLoading = false
     }
 }
