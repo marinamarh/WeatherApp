@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CityWeather: Identifiable, Hashable, Sendable {
+struct CityWeather: Identifiable, Hashable, Sendable, Equatable {
     let id: String
     let cityName: String
     let country: String

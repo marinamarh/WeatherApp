@@ -7,10 +7,8 @@
 
 import Foundation
 
-struct ForecastResult: Sendable {
+struct ForecastResult: Sendable, Equatable {
     let current: CityWeather
     let hourly: [Forecast]          
     let daily: [DailyForecast]
 }
-
-

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Forecast: Identifiable, Hashable, Sendable {
+struct Forecast: Identifiable, Hashable, Sendable, Equatable{
     let id: Int
     let date: Date
     let temperature: Double

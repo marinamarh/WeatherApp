@@ -32,12 +32,17 @@ final class CityStore {
     func contains(_ city: SavedCity) -> Bool {
         cities.contains { $0.id == city.id }
     }
+    
+    func remove(at offsets: IndexSet) {
+        cities.remove(atOffsets: offsets)
+        save()
+    }
 
     private func save() {
         guard let data = try? JSONEncoder().encode(cities) else { return }
         UserDefaults.standard.set(data, forKey: key)
     }
-
+    
     private func load() {
         guard
             let data = UserDefaults.standard.data(forKey: key),

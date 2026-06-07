@@ -14,10 +14,8 @@ final class WeatherViewModel {
     private let weatherService: WeatherServiceProtocol
     let locationManager: LocationManager
     
-    var currentForecast: ForecastResult?
-    var searchResults: [CityLocation] = []
-    var errorMessage: String?
-    var isLoading = false
+    // 1. Зберігаємо весь прогноз, щоб малювати графіки на 5 днів
+    var state: LoadingState<ForecastResult> = .idle
     
     init(
         weatherService: WeatherServiceProtocol = WeatherService(),
@@ -27,44 +25,29 @@ final class WeatherViewModel {
         self.locationManager = locationManager
     }
     
+    // Для поточного місця знаходження
     func loadWeatherForCurrentLocation() async {
+        // Замість миттєвого nil, ми можемо дочекатися оновлення локації,
+        // якщо твій LocationManager має таку функцію (наприклад, async потік координат).
+        // Але для початку залишимо твою безпечну перевірку:
         guard let location = locationManager.currentLocation else {
-            errorMessage = "Can not get location"
+            state = .error("Не вдалося отримати вашу геолокацію. Перевірте дозволи.")
             return
         }
         
-        await fetchForecast(lat: location.lat, lon: location.lon)
+        await loadWeather(lat: location.lat, lon: location.lon)
     }
     
-    func search(query: String) async {
-        guard !query.isEmpty else {
-            searchResults = []
-            return
-        }
+    // Універсальна функція для БУДЬ-ЯКОГО міста (зі списку чи пошуку)
+    func loadWeather(lat: Double, lon: Double) async {
+        state = .loading
         
         do {
-            searchResults = try await weatherService.searchCity(query: query)
+            let forecast = try await weatherService.fetchForecast(lat: lat, lon: lon)
+            // Зберігаємо ВЕСЬ об'єкт ForecastResult
+            state = .loaded(forecast)
         } catch {
-            errorMessage = "Search error: \(error.localizedDescription)"
-            print(error)
+            state = .error(error.localizedDescription)
         }
-    }
-    
-    func selectCityAndLoadWeather(_ city: CityLocation) async {
-        await fetchForecast(lat: city.lat, lon: city.lon)
-        searchResults = [] // Очищаємо результати пошуку після вибору
-    }
-    
-    private func fetchForecast(lat: Double, lon: Double) async {
-        isLoading = true
-        errorMessage = nil
-        
-        do {
-            currentForecast = try await weatherService.fetchForecast(lat: lat, lon: lon)
-        } catch {
-            errorMessage = "Can not fetch weather: \(error.localizedDescription)"
-        }
-        
-        isLoading = false
     }
 }

@@ -19,7 +19,7 @@ final class WeatherService: WeatherServiceProtocol {
             throw APIError.invalidURL
         }
         let dto: ForecastResponseDTO = try await apiClient.fetch(url: url)
-        return dto.toDomain()
+        return try dto.toDomain()
     }
 
     func searchCity(query: String) async throws -> [CityLocation] {
