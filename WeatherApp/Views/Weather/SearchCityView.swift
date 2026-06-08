@@ -60,7 +60,7 @@ struct SearchCityView: View {
             }
             .sheet(item: $selectedLocation) { location in
                 NavigationStack {
-                    WeatherDetailView(city: location.toSaved())
+                    WeatherDetailView()
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
                                 Button { selectedLocation = nil } label: { Image(systemName: "xmark").fontWeight(.medium) }.tint(.primary)
@@ -70,7 +70,7 @@ struct SearchCityView: View {
                                     cityStore.add(location.toSaved())
                                     selectedLocation = nil
                                     searchText = ""
-                                    searchViewModel.state = .idle
+                                    searchViewModel.reset()
                                 } label: { Image(systemName: "plus").fontWeight(.bold) }
                             }
                         }

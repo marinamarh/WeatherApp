@@ -17,7 +17,7 @@ struct MainWeatherView: View {
             }
             
             Tab("Favorites", systemImage: "heart.fill") {
-                WeatherPageView()
+                FavoritesView()
             }
             
             Tab("Map", systemImage: "map") {
@@ -32,8 +32,5 @@ struct MainWeatherView: View {
 }
 
 #Preview {
-    let mockStore = CityStore()
     
-    MainWeatherView()
-        .environment(mockStore)
 }

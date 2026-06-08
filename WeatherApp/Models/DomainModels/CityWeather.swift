@@ -24,8 +24,8 @@ struct CityWeather: Identifiable, Hashable, Sendable, Equatable {
     let date: Date
     let sunrise: Date
     let sunset: Date
-    let timezone: Int      
-
+    let timezone: Int
+    
     var iconURL: URL? {
         URL(string: "https://openweathermap.org/img/wn/\(iconCode)@2x.png")
     }

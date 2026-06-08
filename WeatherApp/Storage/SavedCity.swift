@@ -14,6 +14,9 @@ struct SavedCity: Codable, Identifiable, Hashable {
     let lat: Double
     let lon: Double
     let isCurrentLocation: Bool
+    
+    //Preview
+    static let exampleSavedCity: [SavedCity] = CityLocation.exampleCityLocation.map { $0.toSaved() }
 }
 
 extension CityLocation {
