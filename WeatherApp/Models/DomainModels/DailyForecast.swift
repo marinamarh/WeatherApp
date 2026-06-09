@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DailyForecast: Identifiable, Sendable, Equatable {
+struct DailyForecast: Identifiable, Sendable, Equatable, Hashable {
     let id: String         
     let date: Date
     let tempMin: Double

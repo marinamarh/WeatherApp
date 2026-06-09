@@ -68,6 +68,20 @@ final class WeatherViewModel {
             results["current"] = .error("unknown error")
         }
     }
+    
+    func fetchWeatherForSearch(for location: CityLocation) async -> LoadingState<ForecastResult> {
+        do {
+            let forecast = try await weatherService.fetchForecast(
+                lat: location.lat,
+                lon: location.lon
+            )
+            return .loaded(forecast)
+        } catch let error as APIError {
+            return .error(error.errorDescription ?? "unknown error")
+        } catch {
+            return .error("unknown error")
+        }
+    }
 
     // Preview
     static var example: WeatherViewModel {
