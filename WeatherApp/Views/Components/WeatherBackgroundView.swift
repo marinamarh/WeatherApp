@@ -11,15 +11,18 @@ struct WeatherBackgroundView: View {
     let weather: CityWeather
 
     var body: some View {
-        Image(weather.backgroundImageName)
-            .resizable()
-            .scaledToFill()
-            .ignoresSafeArea()
-            .overlay {
-                Color.black.opacity(weather.isDay ? 0.25 : 0.45)
-                    .ignoresSafeArea()
-            }
-            .animation(.easeInOut(duration: 0.8), value: weather.iconCode)
+        GeometryReader { geo in
+            Image(weather.backgroundImageName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: geo.size.width, height: geo.size.height)
+                .clipped()      
+                .overlay {
+                    Color.black.opacity(weather.isDay ? 0.25 : 0.45)
+                }
+                .animation(.easeInOut(duration: 0.8), value: weather.iconCode)
+        }
+        .ignoresSafeArea()
     }
 }
 
