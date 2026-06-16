@@ -5,23 +5,24 @@
 //  Created by Marina Marhitych on 04.06.2026.
 //
 
-//
-//  WeatherDetailView.swift
-//  WeatherApp
-//
 
 import SwiftUI
 
 struct WeatherDetailView: View {
     let forecast: ForecastResult
-
+    var safeArea: UIEdgeInsets = .zero
+    
     private var weather: CityWeather { forecast.current }
-    private var fg: Color        { weather.foregroundColor }
+    private var fg: Color { weather.foregroundColor }
     private var secondary: Color { fg.opacity(0.7) }
+    
+    private var isFullScreen: Bool { safeArea != .zero }
 
     var body: some View {
         ZStack {
-            WeatherBackgroundView(weather: weather)
+            if !isFullScreen {
+                WeatherBackgroundView(weather: weather)
+            }
 
             LinearGradient(
                 colors: [.clear, .black.opacity(weather.isDay ? 0.2 : 0.4)],
@@ -38,8 +39,9 @@ struct WeatherDetailView: View {
                     WeatherConditionsCard(weather: weather, fg: fg, secondary: secondary)
                     WeatherSunCard(weather: weather, fg: fg, secondary: secondary)
                 }
+                .padding(.top, safeArea.top)
                 .padding(.horizontal, 16)
-                .padding(.bottom, 40)
+                .padding(.bottom, safeArea.bottom + 40)
             }
         }
         .navigationTitle(weather.cityName)

@@ -134,7 +134,7 @@ fileprivate struct CustomPanGesture: UIGestureRecognizerRepresentable {
     
     class Coordinator: NSObject, UIGestureRecognizerDelegate {
         func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-            guard let panGesture = gestureRecognizer as? UIScreenEdgePanGestureRecognizer else {
+            guard let panGesture = gestureRecognizer as? UIPanGestureRecognizer else {
                 return false
             }
             
