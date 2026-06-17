@@ -36,14 +36,14 @@ struct WeatherListView: View {
         case .idle:
             EmptyView()
         case .loading:
-            WeatherCityCardSkeleton(name: city.name)
+            WeatherCityCard(state: .loading(cityName: city.name))
         case .loaded(let forecast):
             Button { selectedForecast = forecast } label: {
-                WeatherCityCard(forecast: forecast)
+                WeatherCityCard(state: .loaded(forecast))
             }
             .buttonStyle(.plain)
         case .error(let message):
-            WeatherCityCardError(name: city.name, message: message)
+            WeatherCityCard(state: .error(cityName: city.name, message: message))
         }
     }
 }

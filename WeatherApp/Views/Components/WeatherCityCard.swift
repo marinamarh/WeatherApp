@@ -7,16 +7,28 @@
 
 import SwiftUI
 
-struct WeatherCityCard: View {
-    let forecast: ForecastResult
+enum WeatherCityCardState {
+    case loading(cityName: String)
+    case loaded(ForecastResult)
+    case error(cityName: String, message: String)
+}
 
-    private var weather: CityWeather { forecast.current }
-    private var fg: Color        { weather.foregroundColor }
-    private var secondary: Color { fg.opacity(0.7) }
+struct WeatherCityCard: View {
+    let state: WeatherCityCardState
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            Image(weather.backgroundImageName)
+            cardBackground
+            cardContent
+        }
+        .cardShape()
+    }
+
+    @ViewBuilder
+    private var cardBackground: some View {
+        switch state {
+        case .loaded(let forecast):
+            Image(forecast.current.backgroundImageName)
                 .resizable()
                 .scaledToFill()
                 .frame(maxWidth: .infinity)
@@ -28,6 +40,23 @@ struct WeatherCityCard: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
+
+        case .loading:
+            Color(.systemGray5)
+                .skeleton(isRedacted: true)
+
+        case .error:
+            Color(.systemGray6)
+        }
+    }
+
+    @ViewBuilder
+    private var cardContent: some View {
+        switch state {
+        case .loaded(let forecast):
+            let weather = forecast.current
+            let fg = weather.foregroundColor
+            let secondary = fg.opacity(0.7)
 
             HStack(alignment: .bottom) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -48,46 +77,30 @@ struct WeatherCityCard: View {
             }
             .foregroundStyle(fg)
             .padding(16)
-        }
-        .cardShape()
-    }
-}
 
-struct WeatherCityCardSkeleton: View {
-    let name: String
-
-    var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            Color(.systemGray5)
-
+        case .loading(let name):
             HStack(alignment: .bottom) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(name)
                         .font(.title3.weight(.semibold))
                         .foregroundStyle(Color(.systemGray2))
-                    Capsule().fill(Color(.systemGray4)).frame(width: 90, height: 12)
+                    Capsule()
+                        .fill(Color(.systemGray4))
+                        .frame(width: 90, height: 12)
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 6) {
-                    Capsule().fill(Color(.systemGray4)).frame(width: 56, height: 44)
-                    Capsule().fill(Color(.systemGray4)).frame(width: 80, height: 12)
+                    Capsule()
+                        .fill(Color(.systemGray4))
+                        .frame(width: 56, height: 44)
+                    Capsule()
+                        .fill(Color(.systemGray4))
+                        .frame(width: 80, height: 12)
                 }
             }
             .padding(16)
-        }
-        .cardShape()
-        .shimmer()
-    }
-}
 
-struct WeatherCityCardError: View {
-    let name: String
-    let message: String
-
-    var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            Color(.systemGray6)
-
+        case .error(let name, let message):
             HStack(alignment: .bottom) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(name)
@@ -103,7 +116,6 @@ struct WeatherCityCardError: View {
             }
             .padding(16)
         }
-        .cardShape()
     }
 }
 
@@ -121,9 +133,9 @@ private extension View {
     ZStack {
         Color(hex: "1A1A2E").ignoresSafeArea()
         VStack(spacing: 12) {
-            WeatherCityCard(forecast: .kyiv)
-            WeatherCityCardSkeleton(name: "London")
-            WeatherCityCardError(name: "Dubai", message: "Failed to load")
+            WeatherCityCard(state: .loaded(.kyiv))
+            WeatherCityCard(state: .loading(cityName: "London"))
+            WeatherCityCard(state: .error(cityName: "Dubai", message: "Failed to load"))
         }
         .padding()
     }
