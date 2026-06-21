@@ -5,17 +5,16 @@
 //  Created by Marina Marhitych on 04.06.2026.
 //
 
-
 import SwiftUI
 
 struct WeatherDetailView: View {
     let forecast: ForecastResult
     var safeArea: UIEdgeInsets = .zero
-    
+
     private var weather: CityWeather { forecast.current }
     private var fg: Color { weather.foregroundColor }
     private var secondary: Color { fg.opacity(0.7) }
-    
+
     private var isFullScreen: Bool { safeArea != .zero }
 
     var body: some View {
@@ -32,12 +31,44 @@ struct WeatherDetailView: View {
             .allowsHitTesting(false)
 
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 16) {
+                LazyVStack(spacing: 16) {
                     WeatherHeroSection(weather: weather)
-                    WeatherHourlyCard(items: forecast.hourly, fg: fg, secondary: secondary)
-                    WeatherDailyCard(days: forecast.daily, fg: fg, secondary: secondary)
-                    WeatherConditionsCard(weather: weather, fg: fg, secondary: secondary)
-                    WeatherSunCard(weather: weather, fg: fg, secondary: secondary)
+
+                    // HOURLY
+                    StickySection {
+                        WeatherHourlyCard(items: forecast.hourly, fg: fg, secondary: secondary)
+                    } header: {
+                        CardHeader(icon: "clock", title: "HOURLY FORECAST", color: secondary)
+                    } minimisedHeader: {
+                        CardHeader(icon: "clock", title: "HOURLY FORECAST", color: secondary)
+                    }
+
+                    // 7-DAY
+                    StickySection {
+                        WeatherDailyCard(days: forecast.daily, fg: fg, secondary: secondary)
+                    } header: {
+                        CardHeader(icon: "calendar", title: "7-DAY FORECAST", color: secondary)
+                    } minimisedHeader: {
+                        CardHeader(icon: "calendar", title: "7-DAY FORECAST", color: secondary)
+                    }
+
+                    // CONDITIONS
+                    StickySection {
+                        WeatherConditionsCard(weather: weather, fg: fg, secondary: secondary)
+                    } header: {
+                        CardHeader(icon: "info.circle", title: "CONDITIONS", color: secondary)
+                    } minimisedHeader: {
+                        CardHeader(icon: "info.circle", title: "CONDITIONS", color: secondary)
+                    }
+
+                    // SUN
+                    StickySection {
+                        WeatherSunCard(weather: weather, fg: fg, secondary: secondary)
+                    } header: {
+                        CardHeader(icon: "sun.horizon", title: "SUN & MOON", color: secondary)
+                    } minimisedHeader: {
+                        CardHeader(icon: "sun.horizon", title: "SUN & MOON", color: secondary)
+                    }
                 }
                 .padding(.top, safeArea.top)
                 .padding(.horizontal, 16)

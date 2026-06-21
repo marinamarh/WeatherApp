@@ -15,22 +15,14 @@ struct WeatherHourlyCard: View {
     @State private var appeared = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            CardHeader(icon: "clock", title: "HOURLY FORECAST", color: secondary)
-            Divider().overlay(fg.opacity(0.2))
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 0) {
-                    ForEach(items) { item in
-                        HourlyCell(item: item, fg: fg, secondary: secondary)
-                    }
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 0) {
+                ForEach(items) { item in
+                    HourlyCell(item: item, fg: fg, secondary: secondary)
                 }
-                .padding(.horizontal, 4)
             }
+            .padding(.horizontal, 4)
         }
-        .padding(16)
-        .frame(maxWidth: .infinity)
-        .glassEffect(.regular, in: .rect(cornerRadius: 20))
         .slideIn(appeared: appeared, delay: 0.10)
         .onAppear { appeared = true }
     }

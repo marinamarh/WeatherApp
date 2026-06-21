@@ -15,22 +15,14 @@ struct WeatherDailyCard: View {
     @State private var appeared = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            CardHeader(icon: "calendar", title: "7-DAY FORECAST", color: secondary)
-            Divider().overlay(fg.opacity(0.2))
-
-            VStack(spacing: 0) {
-                ForEach(Array(days.enumerated()), id: \.element.id) { idx, day in
-                    DailyRow(day: day, fg: fg, secondary: secondary)
-                    if idx < days.count - 1 {
-                        Divider().overlay(fg.opacity(0.12)).padding(.vertical, 8)
-                    }
+        VStack(spacing: 0) {
+            ForEach(Array(days.enumerated()), id: \.element.id) { idx, day in
+                DailyRow(day: day, fg: fg, secondary: secondary)
+                if idx < days.count - 1 {
+                    Divider().overlay(fg.opacity(0.12)).padding(.vertical, 8)
                 }
             }
         }
-        .padding(16)
-        .frame(maxWidth: .infinity)
-        .glassEffect(.regular, in: .rect(cornerRadius: 20))
         .slideIn(appeared: appeared, delay: 0.20)
         .onAppear { appeared = true }
     }

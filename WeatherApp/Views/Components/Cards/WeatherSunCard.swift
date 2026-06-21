@@ -5,6 +5,13 @@
 //  Created by Marina Marhitych on 12.06.2026.
 //
 
+//
+//  WeatherSunCard.swift
+//  WeatherApp
+//
+//  Created by Marina Marhitych on 12.06.2026.
+//
+
 import SwiftUI
 
 struct WeatherSunCard: View {
@@ -58,7 +65,6 @@ private struct SunTile: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, minHeight: 100, alignment: .leading)
-        .glassEffect(.regular, in: .rect(cornerRadius: 20))
     }
 }
 

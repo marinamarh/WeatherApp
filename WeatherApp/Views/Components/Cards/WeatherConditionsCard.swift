@@ -15,31 +15,23 @@ struct WeatherConditionsCard: View {
     @State private var appeared = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            CardHeader(icon: "info.circle", title: "CONDITIONS", color: secondary)
-            Divider().overlay(fg.opacity(0.2))
-
-            LazyVGrid(
-                columns: [GridItem(.flexible()), GridItem(.flexible())],
-                spacing: 12
-            ) {
-                ConditionTile(icon: "humidity.fill", label: "Humidity",
-                              value: "\(weather.humidity)%",
-                              fg: fg, secondary: secondary)
-                ConditionTile(icon: "wind", label: "Wind",
-                              value: String(format: "%.1f m/s", weather.windSpeed),
-                              fg: fg, secondary: secondary)
-                ConditionTile(icon: "gauge.medium", label: "Pressure",
-                              value: "\(weather.pressure) hPa",
-                              fg: fg, secondary: secondary)
-                ConditionTile(icon: "location.north.fill", label: "Direction",
-                              value: weather.windDirection,
-                              fg: fg, secondary: secondary)
-            }
+        LazyVGrid(
+            columns: [GridItem(.flexible()), GridItem(.flexible())],
+            spacing: 12
+        ) {
+            ConditionTile(icon: "humidity.fill", label: "Humidity",
+                          value: "\(weather.humidity)%",
+                          fg: fg, secondary: secondary)
+            ConditionTile(icon: "wind", label: "Wind",
+                          value: String(format: "%.1f m/s", weather.windSpeed),
+                          fg: fg, secondary: secondary)
+            ConditionTile(icon: "gauge.medium", label: "Pressure",
+                          value: "\(weather.pressure) hPa",
+                          fg: fg, secondary: secondary)
+            ConditionTile(icon: "location.north.fill", label: "Direction",
+                          value: weather.windDirection,
+                          fg: fg, secondary: secondary)
         }
-        .padding(16)
-        .frame(maxWidth: .infinity)
-        .glassEffect(.regular, in: .rect(cornerRadius: 20))
         .slideIn(appeared: appeared, delay: 0.30)
         .onAppear { appeared = true }
     }
@@ -65,7 +57,6 @@ private struct ConditionTile: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
-        .glassEffect(.regular, in: .rect(cornerRadius: 14))
     }
 }
 
