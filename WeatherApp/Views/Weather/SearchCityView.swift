@@ -45,7 +45,7 @@ struct SearchCityView: View {
                         } label: {
                             VStack(alignment: .leading) {
                                 Text(location.name).font(.headline)
-                                Text("\(location.state ?? ""), \(location.country)")
+                                Text(location.subtitle)
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
                             }

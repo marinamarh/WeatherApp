@@ -25,9 +25,6 @@ struct MainWeatherView: View {
         }
         .task {
             await weatherViewModel.loadWeatherForCurrentLocation()
-            if let location = weatherViewModel.locationManager.currentLocation {
-                cityStore.add(location.toSaved(isCurrentLocation: true))
-            }
         }
         .task(id: cityStore.cities.count) {
             await weatherViewModel.loadWeather(for: cityStore.cities)

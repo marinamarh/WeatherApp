@@ -10,7 +10,7 @@ import Foundation
 extension GeocodingDTO {
     func toDomain() -> CityLocation {
         CityLocation(
-            id: "\(lat),\(lon)",
+            id: "\(name)-\(country)-\(state ?? "")-\(lat)-\(lon)",
             name: name,
             country: country,
             state: state,

@@ -8,13 +8,21 @@
 import Foundation
 
 struct CityLocation: Identifiable, Hashable, Sendable, Equatable {
-    let id: String 
+    let id: String
     let name: String
     let country: String
     let state: String?
     let lat: Double
     let lon: Double
     
+    var subtitle: String {
+        let countryName = Locale.current.localizedString(forRegionCode: country) ?? country
+        if let state, !state.isEmpty {
+            return "\(state), \(countryName)"
+        }
+        return countryName
+    }
+
     // Preview
     static let exampleCityLocation: [CityLocation] = [
         CityLocation(

@@ -16,6 +16,14 @@ struct WeatherListView: View {
     var body: some View {
         NavigationStack {
             List {
+                if let locationCity = weatherViewModel.locationManager.currentLocation {
+                    let locationSaved = locationCity.toSaved(isCurrentLocation: true)
+                    locationRow(for: locationSaved)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(.init(top: 6, leading: 16, bottom: 6, trailing: 16))
+                }
+
                 ForEach(cityStore.cities) { city in
                     cityRow(for: city)
                         .listRowBackground(Color.clear)
@@ -27,6 +35,23 @@ struct WeatherListView: View {
             .listStyle(.plain)
             .navigationTitle("Weather")
             .weatherDetailSheet(forecast: $selectedForecast)
+        }
+    }
+
+    @ViewBuilder
+    private func locationRow(for city: SavedCity) -> some View {
+        switch weatherViewModel.locationState {
+        case .idle:
+            EmptyView()
+        case .loading:
+            WeatherCityCard(state: .loading(cityName: city.name))
+        case .loaded(let forecast):
+            Button { selectedForecast = forecast } label: {
+                WeatherCityCard(state: .loaded(forecast))
+            }
+            .buttonStyle(.plain)
+        case .error(let message):
+            WeatherCityCard(state: .error(cityName: city.name, message: message))
         }
     }
 

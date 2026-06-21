@@ -15,6 +15,7 @@ final class WeatherViewModel {
     let locationManager: LocationManager
 
     var results: [String: LoadingState<ForecastResult>] = [:]
+    var locationState: LoadingState<ForecastResult> = .idle
 
     init(
         weatherService: WeatherServiceProtocol = WeatherService(),
@@ -51,21 +52,20 @@ final class WeatherViewModel {
     }
 
     func loadWeatherForCurrentLocation() async {
-        guard locationManager.currentLocation.map({ results[$0.id]?.isLoading != true }) ?? true else { return }
+        guard locationState.isLoading == false else { return }
 
+        locationState = .loading
         do {
             let location = try await locationManager.resolveCurrentLocation()
-            let city = location.toSaved(isCurrentLocation: true)
-            results[city.id] = .loading
             let forecast = try await weatherService.fetchForecast(
                 lat: location.lat,
                 lon: location.lon
             )
-            results[city.id] = .loaded(forecast)
+            locationState = .loaded(forecast)
         } catch let error as APIError {
-            results["current"] = .error(error.errorDescription ?? "unknown error")
+            locationState = .error(error.errorDescription ?? "unknown error")
         } catch {
-            results["current"] = .error("unknown error")
+            locationState = .error("unknown error")
         }
     }
     
