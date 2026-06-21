@@ -47,7 +47,7 @@ private struct HourlyCell: View {
                 .font(.caption.weight(.medium))
                 .foregroundStyle(secondary)
 
-            Image(systemName: weatherSymbol(for: item.iconCode))
+            Image(systemName: item.iconCode.weatherSymbolName)
                 .symbolRenderingMode(.multicolor)
                 .font(.system(size: 26))
                 .frame(width: 34, height: 34)

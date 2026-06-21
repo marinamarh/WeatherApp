@@ -7,7 +7,19 @@
 
 import Foundation
 
-func weatherSymbol(for iconCode: String) -> String {
+extension CityWeather {
+    var symbolName: String {
+        weatherSymbol(for: iconCode)
+    }
+}
+
+extension String {
+    var weatherSymbolName: String {
+        weatherSymbol(for: self)
+    }
+}
+
+private func weatherSymbol(for iconCode: String) -> String {
     let code = String(iconCode.dropLast())
     let isNight = iconCode.hasSuffix("n")
     switch code {
@@ -22,9 +34,4 @@ func weatherSymbol(for iconCode: String) -> String {
     case "50": return "cloud.fog.fill"
     default:   return "cloud.fill"
     }
-}
-
-func compassPoint(for degrees: Int) -> String {
-    let pts = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
-    return pts[Int((Double(degrees) / 45).rounded()) % 8]
 }

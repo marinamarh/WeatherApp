@@ -55,7 +55,7 @@ private struct DailyRow: View {
                     .fixedSize()
             }
 
-            Image(systemName: weatherSymbol(for: day.iconCode))
+            Image(systemName: day.iconCode.weatherSymbolName)
                 .symbolRenderingMode(.multicolor)
                 .font(.system(size: 22))
                 .frame(width: 30)

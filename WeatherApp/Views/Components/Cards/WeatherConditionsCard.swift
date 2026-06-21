@@ -33,7 +33,7 @@ struct WeatherConditionsCard: View {
                               value: "\(weather.pressure) hPa",
                               fg: fg, secondary: secondary)
                 ConditionTile(icon: "location.north.fill", label: "Direction",
-                              value: compassPoint(for: weather.windDeg),
+                              value: weather.windDirection,
                               fg: fg, secondary: secondary)
             }
         }

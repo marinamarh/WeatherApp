@@ -17,7 +17,7 @@ struct WeatherHeroSection: View {
 
     var body: some View {
         VStack(spacing: 4) {
-            Image(systemName: weatherSymbol(for: weather.iconCode))
+            Image(systemName: weather.symbolName)
                 .symbolRenderingMode(.multicolor)
                 .font(.system(size: 72))
                 .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
