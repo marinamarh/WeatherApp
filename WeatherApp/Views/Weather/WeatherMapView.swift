@@ -5,6 +5,13 @@
 //  Created by Marina Marhitych on 05.06.2026.
 //
 
+//
+//  WeatherMapView.swift
+//  WeatherApp
+//
+//  Created by Marina Marhitych on 05.06.2026.
+//
+
 import SwiftUI
 import MapKit
 
@@ -14,14 +21,11 @@ struct WeatherMapView: View {
 
     @State private var mapPosition: MapCameraPosition = .automatic
 
-    // Точка тапу на екрані
     @State private var tapPoint: CGPoint = .zero
-    // Локація для превʼю-карточки
     @State private var previewLocation: CityLocation?
-    // Стан погоди для карточки
     @State private var previewState: LoadingState<ForecastResult> = .idle
-    // Sheet з деталями
     @State private var detailLocation: CityLocation?
+    @State private var menuProgress: CGFloat = 0
 
     var body: some View {
         NavigationStack {
@@ -42,6 +46,12 @@ struct WeatherMapView: View {
                     MapScaleView()
                 }
                 .onTapGesture { screenPoint in
+                    if menuProgress > 0 {
+                        withAnimation(.bouncy(duration: 0.75, extraBounce: 0.02)) {
+                            menuProgress = 0
+                        }
+                        return
+                    }
                     guard let coord = proxy.convert(screenPoint, from: .local) else { return }
                     tapPoint = screenPoint
                     reverseGeocode(coord)
@@ -53,10 +63,9 @@ struct WeatherMapView: View {
                 if let location = previewLocation {
                     GeometryReader { geo in
                         let cardWidth: CGFloat = geo.size.width - 32
-                        let cardHeight: CGFloat = 140 + 56 + 8 // card + menu + gap
+                        let cardHeight: CGFloat = 140 + 56 + 8
                         let x = min(max(tapPoint.x - cardWidth / 2, 16), geo.size.width - cardWidth - 16)
                         let y: CGFloat = {
-                            // Якщо місце є — показуємо вище, інакше нижче
                             let above = tapPoint.y - cardHeight - 12
                             return above > 60 ? above : tapPoint.y + 12
                         }()
@@ -66,13 +75,14 @@ struct WeatherMapView: View {
 
                             MapActionMenu(
                                 isSaved: cityStore.cities.contains(where: { $0.id == location.id }),
+                                progress: $menuProgress,
                                 onAdd: {
                                     cityStore.add(location.toSaved())
                                     withAnimation { previewLocation = nil; previewState = .idle }
                                 },
                                 onViewWeather: { detailLocation = location },
                                 onDismiss: {
-                                    withAnimation { previewLocation = nil; previewState = .idle }
+                                    withAnimation { previewLocation = nil; previewState = .idle; menuProgress = 0 }
                                 }
                             )
                         }
@@ -90,8 +100,6 @@ struct WeatherMapView: View {
             )
         }
     }
-
-    // MARK: - Reverse geocode + fetch weather
 
     private func reverseGeocode(_ coord: CLLocationCoordinate2D) {
         let geocoder = CLGeocoder()
@@ -129,8 +137,6 @@ struct WeatherMapView: View {
     }
 }
 
-// MARK: - LoadingState → WeatherCityCardState
-
 private extension LoadingState where T == ForecastResult {
     func toCardState(cityName: String) -> WeatherCityCardState {
         switch self {
@@ -144,37 +150,31 @@ private extension LoadingState where T == ForecastResult {
     }
 }
 
-// MARK: - Action Menu
-
 private struct MapActionMenu: View {
     let isSaved: Bool
+    @Binding var progress: CGFloat
     let onAdd: () -> Void
     let onViewWeather: () -> Void
     let onDismiss: () -> Void
 
-    @State private var progress: CGFloat = 0
-
     var body: some View {
         HStack {
-            // Закрити
             Button(action: onDismiss) {
                 Image(systemName: "xmark")
                     .font(.title3)
                     .frame(width: 55, height: 55)
             }
             .buttonStyle(.plain)
-            .glassEffect(.regular, in: .circle)
+            .glassEffect(.clear, in: .circle)
 
             Spacer()
 
-            // Expandable glass menu
             ExpandableGlassMenu(
                 alignment: .bottomTrailing,
                 progress: progress,
                 labelSize: CGSize(width: 55, height: 55)
             ) {
                 VStack(alignment: .leading, spacing: 0) {
-                    // Подивитися погоду
                     Button(action: {
                         withAnimation(.bouncy(duration: 0.75, extraBounce: 0.02)) {
                             progress = 0
@@ -187,7 +187,6 @@ private struct MapActionMenu: View {
 
                     Divider().padding(.horizontal, 12)
 
-                    // Додати / вже додано
                     if isSaved {
                         menuRow("checkmark.circle.fill", "Added")
                             .foregroundStyle(.secondary)
@@ -215,7 +214,6 @@ private struct MapActionMenu: View {
                     }
             }
         }
-        // Закриваємо меню при тапі поза ним
         .onTapGesture {
             if progress > 0 {
                 withAnimation(.bouncy(duration: 0.75, extraBounce: 0.02)) {
@@ -241,8 +239,6 @@ private struct MapActionMenu: View {
     }
 }
 
-// MARK: - Location Annotation
-
 private struct LocationAnnotation: View {
     var body: some View {
         ZStack {
@@ -258,8 +254,6 @@ private struct LocationAnnotation: View {
         }
     }
 }
-
-// MARK: - Preview
 
 #Preview {
     WeatherMapView()

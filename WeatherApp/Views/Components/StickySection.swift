@@ -7,48 +7,9 @@
 
 import SwiftUI
 
-struct StickySectionPreview: View {
-    var body: some View {
-        ZStack {
-            LinearGradient(colors: [.blue, .pink], startPoint: .top, endPoint: .bottom)
-            ScrollView(.vertical) {
-                LazyVStack(spacing: 12) {
-                    StickySection {
-                        HStack(spacing: 10) {
-                            Image(systemName: "cloud.fill")
-                            
-                            Text("Scattered light rain from 10 pm to 12 pm.")
-                        }
-                        .padding(.vertical, 10)
-                    } header: {
-                        HStack {
-                            Text("Highlights")
-                                .fontWeight(.semibold)
-                            
-                            Spacer(minLength: 0)
-                            
-                            Image(systemName: "exclamationmark.bubble.fill")
-                                .font(.callout)
-                        }
-                    } minimisedHeader: {
-                        HStack(spacing: 6) {
-                            Image(systemName: "text.menu")
-                            Text("HIGHLIGHTS")
-                            
-                            Spacer(minLength: 0)
-                        }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    }
-                    
-                }
-            }
-        }
-        .safeAreaPadding(15)
-    }
-}
 
-struct StickySection<Content: View, Header: View, MinimisedHeader: View>: View {    var config: Config = .init()
+struct StickySection<Content: View, Header: View, MinimisedHeader: View>: View {
+    var config: Config = .init()
     var spacing: CGFloat = 10
     @ViewBuilder var content: Content
     @ViewBuilder var header: Header
@@ -121,10 +82,10 @@ struct StickySection<Content: View, Header: View, MinimisedHeader: View>: View {
                     if config.isGlassBackground {
                         Rectangle()
                             .fill(.clear)
-                            .glassEffect(.clear, in: .rect(cornerRadius: config.cornerRadius))
+                            .glassEffect(.regular, in: .rect(cornerRadius: config.cornerRadius))
                     } else {
                         RoundedRectangle(cornerRadius: config.cornerRadius)
-                            .fill(config.background)
+                            .fill(.ultraThinMaterial)
                     }
                 }
                 .padding(.bottom, bottomPadding)
@@ -153,15 +114,11 @@ struct StickySection<Content: View, Header: View, MinimisedHeader: View>: View {
         var sectionPadding: CGFloat = 15
         var cornerRadius: CGFloat = 20
         var background: AnyShapeStyle = .init(.fill.tertiary)
-        var isGlassBackground: Bool = true
+        var isGlassBackground: Bool = false
         
         var minimisedHeaderOffset: CGFloat = -10
         var headerFadeDistance: CGFloat = 15
         var fadeDistance: CGFloat = 45
         var fadeScale: CGFloat = 0.05
     }
-}
-
-#Preview {
-    StickySectionPreview()
 }

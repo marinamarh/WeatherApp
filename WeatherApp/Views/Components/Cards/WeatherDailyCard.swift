@@ -9,17 +9,18 @@ import SwiftUI
 
 struct WeatherDailyCard: View {
     let days: [DailyForecast]
-    let fg: Color
-    let secondary: Color
-
+    
     @State private var appeared = false
-
+    
+    private var globalMin: Double { days.map(\.tempMin).min() ?? 0 }
+    private var globalMax: Double { days.map(\.tempMax).max() ?? 0 }
+    
     var body: some View {
         VStack(spacing: 0) {
             ForEach(Array(days.enumerated()), id: \.element.id) { idx, day in
-                DailyRow(day: day, fg: fg, secondary: secondary)
+                DailyRow(day: day, globalMin: globalMin, globalMax: globalMax)
                 if idx < days.count - 1 {
-                    Divider().overlay(fg.opacity(0.12)).padding(.vertical, 8)
+                    Divider().overlay(.white.opacity(0.12)).padding(.vertical, 8)
                 }
             }
         }
@@ -30,44 +31,99 @@ struct WeatherDailyCard: View {
 
 private struct DailyRow: View {
     let day: DailyForecast
-    let fg: Color
-    let secondary: Color
-
+    let globalMin: Double
+    let globalMax: Double
+    
+    @State private var barWidth: CGFloat = 0
+    
     var body: some View {
         HStack(spacing: 8) {
-            Text(day.date, format: .dateTime.weekday(.wide))
-                .font(.body.weight(.medium))
-                .foregroundStyle(fg)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
+            Text(day.date, format: .dateTime.weekday(.abbreviated))
+                .font(.title3.weight(.medium))
+                .foregroundStyle(.white)
+                .frame(width: 42, alignment: .leading)
+            
             if day.pop > 0.1 {
-                Label(String(format: "%d%%", Int(day.pop * 100)), systemImage: "drop.fill")
-                    .font(.caption)
-                    .foregroundStyle(Color(hex: "90CAF9"))
-                    .fixedSize()
-            }
-
-            Image(systemName: day.iconCode.weatherSymbolName)
-                .symbolRenderingMode(.multicolor)
-                .font(.system(size: 22))
+                VStack(spacing: 2) {
+                    Image(systemName: day.iconCode.weatherSymbolName)
+                        .symbolRenderingMode(.multicolor)
+                        .font(.system(size: 20))
+                    
+                    Text("\((day.pop * 100).formatted(.number.precision(.fractionLength(0))))%")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(.cyan)
+                }
                 .frame(width: 30)
-
-            Text("\(Int(day.tempMin))° / \(Int(day.tempMax))°")
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(fg)
-                .fixedSize()
+            } else {
+                Image(systemName: day.iconCode.weatherSymbolName)
+                    .symbolRenderingMode(.multicolor)
+                    .font(.system(size: 20))
+                    .frame(width: 30)
+            }
+            
+            Text("\(Int(day.tempMin))°")
+                .font(.title3.weight(.medium))
+                .monospacedDigit()
+                .foregroundStyle(.white.opacity(0.6))
+                .frame(width: 36, alignment: .trailing)
+            
+            RoundedRectangle(cornerRadius: 10)
+                .fill(.white.opacity(0.15))
+                .frame(height: 5)
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    proxy.size.width
+                } action: { newWidth in
+                    var transaction = Transaction()
+                    transaction.disablesAnimations = true
+                    withTransaction(transaction) {
+                        barWidth = newWidth
+                    }
+                }
+                .overlay {
+                    let range = globalMax - globalMin
+                    
+                    if range > 0 {
+                        let factor = barWidth / range
+                        let fillWidth = (day.tempMax - day.tempMin) * factor
+                        let offset = (day.tempMin - globalMin) * factor
+                        
+                        LinearGradient(
+                            stops: [
+                                .init(color: Color(red: 0.2, green: 0.5, blue: 1.0), location: 0.0),
+                                .init(color: Color(red: 0.4, green: 0.8, blue: 1.0), location: 0.2),
+                                .init(color: Color(red: 0.6, green: 0.9, blue: 0.4), location: 0.4),
+                                .init(color: Color(red: 1.0, green: 0.85, blue: 0.0), location: 0.6),
+                                .init(color: Color(red: 1.0, green: 0.5, blue: 0.1), location: 0.8),
+                                .init(color: Color(red: 1.0, green: 0.2, blue: 0.1), location: 1.0),
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                        .frame(height: 5)
+                        .mask {
+                            HStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .frame(width: fillWidth, height: 5)
+                                Spacer(minLength: 0)
+                            }
+                            .offset(x: offset)
+                        }
+                    }
+                }
+            
+            Text("\(Int(day.tempMax))°")
+                .font(.title3.weight(.medium))
+                .monospacedDigit()
+                .foregroundStyle(.white)
+                .frame(width: 36, alignment: .leading)
         }
     }
 }
 
 #Preview {
     ZStack {
-        Color(hex: "283593").ignoresSafeArea()
-        WeatherDailyCard(
-            days: ForecastResult.london.daily,
-            fg: .white,
-            secondary: .white.opacity(0.7)
-        )
-        .padding()
+        Color.blue.ignoresSafeArea()
+        WeatherDailyCard(days: ForecastResult.london.daily)
+            .padding()
     }
 }

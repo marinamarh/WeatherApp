@@ -12,8 +12,7 @@ struct WeatherDetailView: View {
     var safeArea: UIEdgeInsets = .zero
 
     private var weather: CityWeather { forecast.current }
-    private var fg: Color { weather.foregroundColor }
-    private var secondary: Color { fg.opacity(0.7) }
+    private var secondary: Color { Color.white.opacity(0.6) }
 
     private var isFullScreen: Bool { safeArea != .zero }
 
@@ -23,47 +22,36 @@ struct WeatherDetailView: View {
                 WeatherBackgroundView(weather: weather)
             }
 
-            LinearGradient(
-                colors: [.clear, .black.opacity(weather.isDay ? 0.2 : 0.4)],
-                startPoint: .top, endPoint: .bottom
-            )
-            .ignoresSafeArea()
-            .allowsHitTesting(false)
-
             ScrollView(showsIndicators: false) {
                 LazyVStack(spacing: 16) {
                     WeatherHeroSection(weather: weather)
 
-                    // HOURLY
                     StickySection {
-                        WeatherHourlyCard(items: forecast.hourly, fg: fg, secondary: secondary)
+                        WeatherHourlyCard(items: forecast.hourly)
                     } header: {
                         CardHeader(icon: "clock", title: "HOURLY FORECAST", color: secondary)
                     } minimisedHeader: {
                         CardHeader(icon: "clock", title: "HOURLY FORECAST", color: secondary)
                     }
 
-                    // 7-DAY
                     StickySection {
-                        WeatherDailyCard(days: forecast.daily, fg: fg, secondary: secondary)
+                        WeatherDailyCard(days: forecast.daily)
                     } header: {
                         CardHeader(icon: "calendar", title: "7-DAY FORECAST", color: secondary)
                     } minimisedHeader: {
                         CardHeader(icon: "calendar", title: "7-DAY FORECAST", color: secondary)
                     }
 
-                    // CONDITIONS
                     StickySection {
-                        WeatherConditionsCard(weather: weather, fg: fg, secondary: secondary)
+                        WeatherConditionsCard(weather: weather)
                     } header: {
                         CardHeader(icon: "info.circle", title: "CONDITIONS", color: secondary)
                     } minimisedHeader: {
                         CardHeader(icon: "info.circle", title: "CONDITIONS", color: secondary)
                     }
 
-                    // SUN
                     StickySection {
-                        WeatherSunCard(weather: weather, fg: fg, secondary: secondary)
+                        WeatherSunCard(weather: weather)
                     } header: {
                         CardHeader(icon: "sun.horizon", title: "SUN & MOON", color: secondary)
                     } minimisedHeader: {

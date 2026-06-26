@@ -9,8 +9,6 @@ import SwiftUI
 
 struct WeatherHourlyCard: View {
     let items: [Forecast]
-    let fg: Color
-    let secondary: Color
 
     @State private var appeared = false
 
@@ -18,7 +16,7 @@ struct WeatherHourlyCard: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
                 ForEach(items) { item in
-                    HourlyCell(item: item, fg: fg, secondary: secondary)
+                    HourlyCell(item: item)
                 }
             }
             .padding(.horizontal, 4)
@@ -30,31 +28,29 @@ struct WeatherHourlyCard: View {
 
 private struct HourlyCell: View {
     let item: Forecast
-    let fg: Color
-    let secondary: Color
 
     var body: some View {
         VStack(spacing: 6) {
             Text(item.date, format: .dateTime.hour())
-                .font(.caption.weight(.medium))
-                .foregroundStyle(secondary)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white)
 
             Image(systemName: item.iconCode.weatherSymbolName)
                 .symbolRenderingMode(.multicolor)
-                .font(.system(size: 26))
                 .frame(width: 34, height: 34)
 
-            Text("\(Int(item.temperature))°")
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(fg)
 
-            if item.pop > 0.1 {
-                Label(String(format: "%d%%", Int(item.pop * 100)), systemImage: "drop.fill")
+            if item.pop > 0 {
+                Text("\((item.pop * 100).formatted(.number.precision(.fractionLength(0))))%")
                     .font(.caption2)
-                    .foregroundStyle(Color(hex: "90CAF9"))
+                    .foregroundStyle(.cyan)
             } else {
                 Color.clear.frame(height: 14)
             }
+            
+            Text("\(Int(item.temperature))°")
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.white)
         }
         .frame(width: 58)
         .padding(.vertical, 4)
@@ -63,12 +59,8 @@ private struct HourlyCell: View {
 
 #Preview {
     ZStack {
-        Color(hex: "1A237E").ignoresSafeArea()
-        WeatherHourlyCard(
-            items: ForecastResult.london.hourly,
-            fg: .white,
-            secondary: .white.opacity(0.7)
-        )
-        .padding()
+        Color.blue.ignoresSafeArea()
+        WeatherHourlyCard(items: ForecastResult.london.hourly)
+            .padding()
     }
 }

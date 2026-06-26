@@ -10,9 +10,9 @@ import SwiftUI
 struct WeatherListView: View {
     @Environment(WeatherViewModel.self) private var weatherViewModel
     @Environment(CityStore.self) private var cityStore
-
+    
     @State private var selectedForecast: ForecastResult?
-
+    
     var body: some View {
         NavigationStack {
             List {
@@ -23,7 +23,7 @@ struct WeatherListView: View {
                         .listRowSeparator(.hidden)
                         .listRowInsets(.init(top: 6, leading: 16, bottom: 6, trailing: 16))
                 }
-
+                
                 ForEach(cityStore.cities) { city in
                     cityRow(for: city)
                         .listRowBackground(Color.clear)
@@ -37,24 +37,24 @@ struct WeatherListView: View {
             .weatherDetailSheet(forecast: $selectedForecast)
         }
     }
-
+    
     @ViewBuilder
     private func locationRow(for city: SavedCity) -> some View {
         switch weatherViewModel.locationState {
         case .idle:
             EmptyView()
         case .loading:
-            WeatherCityCard(state: .loading(cityName: city.name))
+            WeatherCityCard(state: .loading(cityName: city.name), isCurrentLocation: true)
         case .loaded(let forecast):
             Button { selectedForecast = forecast } label: {
-                WeatherCityCard(state: .loaded(forecast))
+                WeatherCityCard(state: .loaded(forecast), isCurrentLocation: true)
             }
             .buttonStyle(.plain)
         case .error(let message):
-            WeatherCityCard(state: .error(cityName: city.name, message: message))
+            WeatherCityCard(state: .error(cityName: city.name, message: message), isCurrentLocation: true)
         }
     }
-
+    
     @ViewBuilder
     private func cityRow(for city: SavedCity) -> some View {
         switch weatherViewModel.results[city.id] ?? .idle {

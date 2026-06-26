@@ -5,30 +5,20 @@
 //  Created by Marina Marhitych on 12.06.2026.
 //
 
-//
-//  WeatherSunCard.swift
-//  WeatherApp
-//
-//  Created by Marina Marhitych on 12.06.2026.
-//
 
 import SwiftUI
 
 struct WeatherSunCard: View {
     let weather: CityWeather
-    let fg: Color
-    let secondary: Color
 
     @State private var appeared = false
 
     var body: some View {
         HStack(spacing: 12) {
             SunTile(icon: "sunrise.fill", label: "SUNRISE",
-                    time: weather.sunrise, tint: Color(hex: "FFD54F"),
-                    fg: fg, secondary: secondary)
+                    time: weather.sunrise)
             SunTile(icon: "sunset.fill",  label: "SUNSET",
-                    time: weather.sunset,  tint: Color(hex: "FF7043"),
-                    fg: fg, secondary: secondary)
+                    time: weather.sunset)
         }
         .slideIn(appeared: appeared, delay: 0.40)
         .onAppear { appeared = true }
@@ -39,27 +29,25 @@ private struct SunTile: View {
     let icon: String
     let label: String
     let time: Date
-    let tint: Color
-    let fg: Color
-    let secondary: Color
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .foregroundStyle(tint)
+                    .foregroundStyle(.white.opacity(0.6))
                     .font(.caption.weight(.semibold))
+                
                 Text(label)
                     .font(.caption.weight(.semibold))
                     .tracking(0.4)
-                    .foregroundStyle(secondary)
+                    .foregroundStyle(.white.opacity(0.6))
             }
 
-            Divider().overlay(fg.opacity(0.2))
+            Divider().overlay(.white.opacity(0.2))
 
             Text(time, format: .dateTime.hour().minute())
-                .font(.system(size: 30, weight: .thin, design: .rounded))
-                .foregroundStyle(fg)
+                .font(.system(size: 30, weight: .light))
+                .foregroundStyle(.white)
 
             Spacer(minLength: 0)
         }
@@ -68,14 +56,11 @@ private struct SunTile: View {
     }
 }
 
+
 #Preview {
     ZStack {
-        Color(hex: "0A0E2A").ignoresSafeArea()
-        WeatherSunCard(
-            weather: ForecastResult.kyiv.current,
-            fg: .white,
-            secondary: .white.opacity(0.7)
-        )
+        Color.blue.ignoresSafeArea()
+        WeatherSunCard(weather: ForecastResult.kyiv.current)
         .padding()
     }
 }

@@ -39,9 +39,9 @@ final class WeatherViewModel {
                         )
                         return (city.id, .loaded(forecast))
                     } catch let error as APIError {
-                        return (city.id, .error(error.errorDescription ?? "unknown error"))
+                        return (city.id, .error(error.errorDescription ?? "Network error"))
                     } catch {
-                        return (city.id, .error("unknown error"))
+                        return (city.id, .error(error.localizedDescription))
                     }
                 }
             }
@@ -52,7 +52,7 @@ final class WeatherViewModel {
     }
 
     func loadWeatherForCurrentLocation() async {
-        guard locationState.isLoading == false else { return }
+        guard !locationState.isLoading else { return }
 
         locationState = .loading
         do {
@@ -62,13 +62,15 @@ final class WeatherViewModel {
                 lon: location.lon
             )
             locationState = .loaded(forecast)
+        } catch let error as LocationError {
+            locationState = .error(error.errorDescription ?? "Location error")
         } catch let error as APIError {
-            locationState = .error(error.errorDescription ?? "unknown error")
+            locationState = .error(error.errorDescription ?? "Network error")
         } catch {
-            locationState = .error("unknown error")
+            locationState = .error(error.localizedDescription)
         }
     }
-    
+
     func fetchWeatherForSearch(for location: CityLocation) async -> LoadingState<ForecastResult> {
         do {
             let forecast = try await weatherService.fetchForecast(
@@ -77,13 +79,12 @@ final class WeatherViewModel {
             )
             return .loaded(forecast)
         } catch let error as APIError {
-            return .error(error.errorDescription ?? "unknown error")
+            return .error(error.errorDescription ?? "Network error")
         } catch {
-            return .error("unknown error")
+            return .error(error.localizedDescription)
         }
     }
 
-    // Preview
     static var example: WeatherViewModel {
         let vm = WeatherViewModel(weatherService: MockWeatherService())
         vm.results = [

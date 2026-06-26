@@ -12,9 +12,6 @@ struct WeatherHeroSection: View {
 
     @State private var appeared = false
 
-    private var fg: Color        { weather.foregroundColor }
-    private var secondary: Color { fg.opacity(0.7) }
-
     var body: some View {
         VStack(spacing: 4) {
             Image(systemName: weather.symbolName)
@@ -24,23 +21,23 @@ struct WeatherHeroSection: View {
                 .frame(width: 96, height: 96)
 
             Text("\(Int(weather.temperature))°")
-                .font(.system(size: 84, weight: .thin, design: .rounded))
-                .foregroundStyle(fg)
+                .font(.system(size: 96, weight: .thin))
+                .foregroundStyle(.white)
 
             Text(weather.description.capitalized)
-                .font(.title3.weight(.medium))
-                .foregroundStyle(secondary)
+                .font(.title2.weight(.medium))
+                .foregroundStyle(.white.opacity(0.6))
 
             HStack(spacing: 12) {
                 Label("Feels \(Int(weather.feelsLike))°", systemImage: "thermometer.medium")
                 Rectangle()
-                    .fill(secondary)
+                    .fill(.secondary)
                     .frame(width: 1, height: 14)
                 Text("H:\(Int(weather.tempMax))°  L:\(Int(weather.tempMin))°")
             }
             .labelStyle(.titleAndIcon)
-            .font(.subheadline)
-            .foregroundStyle(secondary)
+            .font(.title2.weight(.medium))
+            .foregroundStyle(.white)
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 8)
@@ -53,7 +50,7 @@ struct WeatherHeroSection: View {
 
 #Preview {
     ZStack {
-        Color(hex: "1565C0").ignoresSafeArea()
+        Color.blue.ignoresSafeArea()
         WeatherHeroSection(weather: ForecastResult.kyiv.current)
     }
 }

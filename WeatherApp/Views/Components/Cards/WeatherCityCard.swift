@@ -5,6 +5,7 @@
 //  Created by Marina Marhitych on 12.06.2026.
 //
 
+
 import SwiftUI
 
 enum WeatherCityCardState {
@@ -15,6 +16,7 @@ enum WeatherCityCardState {
 
 struct WeatherCityCard: View {
     let state: WeatherCityCardState
+    var isCurrentLocation: Bool = false
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
@@ -55,64 +57,74 @@ struct WeatherCityCard: View {
         switch state {
         case .loaded(let forecast):
             let weather = forecast.current
-            let fg = weather.foregroundColor
-            let secondary = fg.opacity(0.7)
 
-            HStack(alignment: .bottom) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(weather.cityName)
-                        .font(.title3.weight(.semibold))
-                    Text(weather.description.capitalized)
-                        .font(.subheadline)
-                        .foregroundStyle(secondary)
-                }
-                Spacer()
-                VStack(alignment: .trailing, spacing: 2) {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(weather.cityName)
+                            .font(.title2.weight(.bold))
+                        
+                        if isCurrentLocation {
+                            Text("My Location")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.white.opacity(0.9))
+                        }
+                    }
+                    Spacer()
+                    
                     Text("\(Int(weather.temperature))°")
-                        .font(.system(size: 48, weight: .thin, design: .rounded))
+                        .font(.system(size: 54, weight: .light))
+                        .monospacedDigit()
+                }
+
+                Spacer()
+
+                HStack(alignment: .bottom) {
+                    Text(weather.description.capitalized)
+                        .font(.subheadline.weight(.medium))
+                    
+                    Spacer()
+                    
                     Text("H:\(Int(weather.tempMax))°  L:\(Int(weather.tempMin))°")
-                        .font(.caption)
-                        .foregroundStyle(secondary)
+                        .font(.subheadline.weight(.medium))
                 }
             }
-            .foregroundStyle(fg)
+            .foregroundStyle(.white)
             .padding(16)
+            .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 1)
 
         case .loading(let name):
-            HStack(alignment: .bottom) {
-                VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .top) {
                     Text(name)
-                        .font(.title3.weight(.semibold))
+                        .font(.title2.weight(.bold))
                         .foregroundStyle(Color(.systemGray2))
-                    Capsule()
-                        .fill(Color(.systemGray4))
-                        .frame(width: 90, height: 12)
-                }
-                Spacer()
-                VStack(alignment: .trailing, spacing: 6) {
+                    Spacer()
                     Capsule()
                         .fill(Color(.systemGray4))
                         .frame(width: 56, height: 44)
-                    Capsule()
-                        .fill(Color(.systemGray4))
-                        .frame(width: 80, height: 12)
                 }
+                Spacer()
+                Capsule()
+                    .fill(Color(.systemGray4))
+                    .frame(width: 100, height: 12)
             }
             .padding(16)
 
         case .error(let name, let message):
-            HStack(alignment: .bottom) {
-                VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .top) {
                     Text(name)
-                        .font(.title3.weight(.semibold))
-                    Text(message)
-                        .font(.caption)
-                        .foregroundStyle(.red.opacity(0.8))
+                        .font(.title2.weight(.bold))
+                    Spacer()
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.title2)
+                        .foregroundStyle(.red.opacity(0.7))
                 }
                 Spacer()
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.title2)
-                    .foregroundStyle(.red.opacity(0.7))
+                Text(message)
+                    .font(.subheadline.weight(.medium)) 
+                    .foregroundStyle(.red.opacity(0.8))
             }
             .padding(16)
         }
@@ -131,7 +143,7 @@ private extension View {
 
 #Preview {
     ZStack {
-        Color(hex: "1A1A2E").ignoresSafeArea()
+        Color.blue.ignoresSafeArea()
         VStack(spacing: 12) {
             WeatherCityCard(state: .loaded(.kyiv))
             WeatherCityCard(state: .loading(cityName: "London"))
