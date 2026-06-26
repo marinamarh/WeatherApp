@@ -50,15 +50,16 @@ private struct DailyRow: View {
                         .font(.system(size: 20))
                     
                     Text("\((day.pop * 100).formatted(.number.precision(.fractionLength(0))))%")
+                        .lineLimit(1)
                         .font(.caption2.weight(.bold))
                         .foregroundStyle(.cyan)
                 }
-                .frame(width: 30)
+                .frame(width: 36)
             } else {
                 Image(systemName: day.iconCode.weatherSymbolName)
                     .symbolRenderingMode(.multicolor)
                     .font(.system(size: 20))
-                    .frame(width: 30)
+                    .frame(width: 36)
             }
             
             Text("\(Int(day.tempMin))°")

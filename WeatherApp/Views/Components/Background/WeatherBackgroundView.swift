@@ -18,7 +18,7 @@ struct WeatherBackgroundView: View {
                 .frame(width: geo.size.width, height: geo.size.height)
                 .clipped()
                 .overlay {
-                    Color.white.opacity(weather.isDay ? 0.25 : 0.15)
+                    Color.black.opacity(0.15)
                 }
                 .animation(.easeInOut(duration: 0.8), value: weather.iconCode)
         }
