@@ -5,12 +5,6 @@
 //  Created by Marina Marhitych on 05.06.2026.
 //
 
-//
-//  WeatherMapView.swift
-//  WeatherApp
-//
-//  Created by Marina Marhitych on 05.06.2026.
-//
 
 import SwiftUI
 import MapKit

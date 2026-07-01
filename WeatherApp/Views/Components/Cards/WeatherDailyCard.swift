@@ -9,9 +9,7 @@ import SwiftUI
 
 struct WeatherDailyCard: View {
     let days: [DailyForecast]
-    
-    @State private var appeared = false
-    
+        
     private var globalMin: Double { days.map(\.tempMin).min() ?? 0 }
     private var globalMax: Double { days.map(\.tempMax).max() ?? 0 }
     
@@ -24,8 +22,6 @@ struct WeatherDailyCard: View {
                 }
             }
         }
-        .slideIn(appeared: appeared, delay: 0.20)
-        .onAppear { appeared = true }
     }
 }
 

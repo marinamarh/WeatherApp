@@ -10,8 +10,6 @@ import SwiftUI
 struct WeatherHeroSection: View {
     let weather: CityWeather
 
-    @State private var appeared = false
-
     var body: some View {
         VStack(spacing: 4) {
             Image(systemName: weather.symbolName)
@@ -41,10 +39,6 @@ struct WeatherHeroSection: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 8)
-        .opacity(appeared ? 1 : 0)
-        .scaleEffect(appeared ? 1 : 0.9)
-        .animation(.spring(duration: 0.6, bounce: 0.1), value: appeared)
-        .onAppear { appeared = true }
     }
 }
 

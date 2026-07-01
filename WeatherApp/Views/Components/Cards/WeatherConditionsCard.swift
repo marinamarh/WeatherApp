@@ -9,9 +9,7 @@ import SwiftUI
 
 struct WeatherConditionsCard: View {
     let weather: CityWeather
-    
-    @State private var appeared = false
-    
+        
     var body: some View {
         LazyVGrid(
             columns: [GridItem(.flexible()), GridItem(.flexible())],
@@ -38,8 +36,6 @@ struct WeatherConditionsCard: View {
                 value: weather.windDirection
             )
         }
-        .slideIn(appeared: appeared, delay: 0.30)
-        .onAppear { appeared = true }
     }
 }
 

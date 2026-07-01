@@ -10,8 +10,6 @@ import SwiftUI
 struct WeatherHourlyCard: View {
     let items: [Forecast]
 
-    @State private var appeared = false
-
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
@@ -21,8 +19,6 @@ struct WeatherHourlyCard: View {
             }
             .padding(.horizontal, 4)
         }
-        .slideIn(appeared: appeared, delay: 0.10)
-        .onAppear { appeared = true }
     }
 }
 

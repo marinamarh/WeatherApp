@@ -11,8 +11,6 @@ import SwiftUI
 struct WeatherSunCard: View {
     let weather: CityWeather
 
-    @State private var appeared = false
-
     var body: some View {
         HStack(spacing: 12) {
             SunTile(icon: "sunrise.fill", label: "SUNRISE",
@@ -20,8 +18,6 @@ struct WeatherSunCard: View {
             SunTile(icon: "sunset.fill",  label: "SUNSET",
                     time: weather.sunset)
         }
-        .slideIn(appeared: appeared, delay: 0.40)
-        .onAppear { appeared = true }
     }
 }
 
